@@ -51,8 +51,8 @@ exports.signup = async (req, res) => {
 
 // Função para fazer login do usuário
 exports.login = async (req, res) => {
+  console.log("login");
   const { email, senha } = req.body;
-
   try {
     // Verificar se o usuário existe
     const user = await User.findOne({ email });

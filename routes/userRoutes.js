@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/UserController");
 
+// Rota para logar um usuário
+router.post("/users/login", UserController.login);
 // Rota para obter a lista de usuários (rota protegida)
 router.get("/users", UserController.verifyToken, UserController.getUsers);
 
