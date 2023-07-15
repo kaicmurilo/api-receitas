@@ -12,7 +12,9 @@ exports.verifyToken = (req, res) => {
     if (err) {
       return res.status(401).json({ error: "Token inválido" });
     }
-    return res.status(200).json({ decoded });
+
+    const { userId, nome } = decoded;
+    return res.status(200).json({ userId, nome });
   });
 };
 
@@ -32,10 +34,12 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "Senha incorreta" });
     }
 
-    // Gerar token JWT
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    // Gerar token JWT incluindo o nome de usuário
+    const token = jwt.sign(
+      { userId: user._id, nome: user.nome }, // Inclua o nome de usuário no payload
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.json({ token });
   } catch (error) {
