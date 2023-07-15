@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
+const receitasRoutes = require("./routes/receitaRoutes");
 const cors = require("cors");
 
 const app = express();
@@ -21,6 +22,7 @@ mongoose.connect(process.env.MONGODB_URL, {
 // Rotas da API
 app.use("/", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/receitas", receitasRoutes);
 
 // Iniciar o servidor
 const port = process.env.PORT || 3000;

@@ -13,8 +13,7 @@ exports.verifyToken = (req, res) => {
       return res.status(401).json({ error: "Token inválido" });
     }
 
-    const { userId, nome } = decoded;
-    return res.status(200).json({ userId, nome });
+    return res.status(200).json(decoded);
   });
 };
 
