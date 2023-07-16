@@ -1,10 +1,19 @@
+const jwt = require("jsonwebtoken");
 const Receita = require("../models/Receita");
 
 // Função para cadastrar uma nova receita
 exports.cadastrarReceita = async (req, res) => {
-  const { nomeReceita, ingredientes, modoPreparo, nomeCadastrou } = req.body;
-
+  const { nomeReceita, ingredientes, modoPreparo } = req.body;
+  console.log("entrou");
+  var nomeCadastrou = "";
   try {
+    jwt.verify(req.body.dadosToken, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: "Token inválido" });
+      }
+      nomeCadastrou = decoded.nome;
+    });
+    console.log(nomeCadastrou);
     const novaReceita = new Receita({
       nomeReceita,
       ingredientes,
@@ -12,7 +21,6 @@ exports.cadastrarReceita = async (req, res) => {
       nomeCadastrou,
     });
     await novaReceita.save();
-
     res.json({ message: "Receita cadastrada com sucesso" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao cadastrar a receita" });

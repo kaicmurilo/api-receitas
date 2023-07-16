@@ -3,7 +3,7 @@ const router = express.Router();
 const receitaController = require("../controllers/ReceitaController");
 
 // Rota para cadastrar uma nova receita
-router.post("/receitas", receitaController.cadastrarReceita);
+router.post("/nova", receitaController.cadastrarReceita);
 
 // Rota para adicionar um comentário a uma receita
 router.post(
