@@ -17,7 +17,7 @@ const ReceitaSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  nomeCadastrou: {
+  idCadastrou: {
     type: String,
     required: true,
   },

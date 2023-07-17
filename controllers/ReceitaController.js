@@ -19,7 +19,7 @@ exports.cadastrarReceita = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
-    const nomeCadastrou = user.nome + " " + user.sobrenome;
+    const idCadastrou = userId;
     // Verificar a última receita cadastrada
     const ultimaReceita = await Receita.findOne().sort({ dataPostagem: -1 });
 
@@ -47,7 +47,7 @@ exports.cadastrarReceita = async (req, res) => {
       nomeReceita,
       ingredientes,
       modoPreparo,
-      nomeCadastrou,
+      idCadastrou,
       pagina,
     });
 
@@ -82,8 +82,17 @@ exports.adicionarComentario = async (req, res) => {
 // Função para obter todas as receitas
 exports.obterTodasReceitas = async (req, res) => {
   try {
-    console.log("entrou");
-    const receitas = await Receita.find();
+    const receitas = await Receita.find().lean();
+
+    for (let i = 0; i < receitas.length; i++) {
+      const userId = receitas[i].idCadastrou;
+      const user = await User.findById(userId);
+
+      if (user) {
+        receitas[i].nomeCadastrou = user.nome + " " + user.sobrenome;
+      }
+    }
+
     res.json(receitas);
   } catch (error) {
     res.status(500).json({ error: "Erro ao obter as receitas" });
@@ -97,6 +106,15 @@ exports.obterReceitasPorPagina = async (req, res) => {
   try {
     const receitas = await Receita.find({ pagina }).lean();
 
+    for (let i = 0; i < receitas.length; i++) {
+      const userId = receitas[i].idCadastrou;
+      const user = await User.findById(userId);
+
+      if (user) {
+        receitas[i].nomeCadastrou = user.nome + " " + user.sobrenome;
+      }
+    }
+
     res.json(receitas);
   } catch (error) {
     res.status(500).json({ error: "Erro ao obter as receitas" });
@@ -109,9 +127,18 @@ exports.obterReceitaPorId = async (req, res) => {
 
   try {
     const receita = await Receita.findById(receitaId);
+
     if (!receita) {
       return res.status(404).json({ error: "Receita não encontrada" });
     }
+
+    const userId = receita.idCadastrou;
+    const user = await User.findById(userId);
+
+    if (user) {
+      receita.nomeCadastrou = user.nome + " " + user.sobrenome;
+    }
+
     res.json(receita);
   } catch (error) {
     res.status(500).json({ error: "Erro ao obter a receita" });
