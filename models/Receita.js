@@ -33,6 +33,10 @@ const ReceitaSchema = new mongoose.Schema({
       },
     },
   ],
+  pagina: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Receita = mongoose.model("Receita", ReceitaSchema);

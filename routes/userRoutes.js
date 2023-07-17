@@ -26,4 +26,7 @@ router.delete(
 
 router.get("/token", UserController.generateToken);
 
+// Rota para cadastrar um novo usuário
+router.post("/users/register", UserController.signup);
+
 module.exports = router;

@@ -14,6 +14,9 @@ router.post(
 // Rota para obter todas as receitas
 router.get("/", receitaController.obterTodasReceitas);
 
+// Rota para obter todas as receitas
+router.get("/:page", receitaController.obterReceitasPorPagina);
+
 // Rota para obter uma receita pelo ID
 router.get("/receitas/:receitaId", receitaController.obterReceitaPorId);
 

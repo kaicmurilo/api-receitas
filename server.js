@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json()); // Para analisar o corpo das solicitações como JSON
 app.use(express.urlencoded({ extended: true })); // Para analisar corpos de solicitação codificados em URL
 
+app.use(express.static("public"));
 // Conexão com o banco de dados MongoDB
 mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
