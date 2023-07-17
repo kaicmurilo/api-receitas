@@ -53,7 +53,7 @@ exports.cadastrarReceita = async (req, res) => {
 
     await novaReceita.save();
 
-    res.json({ message: "Receita cadastrada com sucesso" });
+    res.json({ message: "Receita cadastrada com sucesso", status: true });
   } catch (error) {
     res.status(500).json({ error: "Erro ao cadastrar a receita" });
   }
