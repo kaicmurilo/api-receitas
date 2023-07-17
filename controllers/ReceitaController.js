@@ -1,35 +1,44 @@
 const jwt = require("jsonwebtoken");
 const Receita = require("../models/Receita");
+const User = require("../models/User");
 
 exports.cadastrarReceita = async (req, res) => {
   const { nomeReceita, ingredientes, modoPreparo } = req.body;
-  console.log(req.body);
-  var nomeCadastrou = "";
 
   try {
-    // Verificar a última receita cadastrada
+    let userId = "";
+    // Verificar o nome do usuário cadastrando a receita
     jwt.verify(req.body.dadosToken, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
         return res.status(401).json({ error: "Token inválido" });
       }
-      nomeCadastrou = decoded.nome;
+      userId = decoded.userId;
     });
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+    const nomeCadastrou = user.nome + " " + user.sobrenome;
+    // Verificar a última receita cadastrada
     const ultimaReceita = await Receita.findOne().sort({ dataPostagem: -1 });
 
     let pagina = 1; // Página padrão para a primeira receita
+
     if (ultimaReceita) {
       // Verificar a quantidade de receitas na última página
-      const receitasUltimaPagina = await Receita.find()
+      const receitasUltimaPagina = await Receita.find({
+        pagina: ultimaReceita.pagina,
+      })
         .sort({ dataPostagem: -1 })
-        .limit(3)
         .lean();
 
-      if (receitasUltimaPagina.length === 3) {
+      if (receitasUltimaPagina.length >= 3) {
         // Todas as 3 últimas receitas estão na última página, incrementar a página
-        pagina = Math.ceil(receitasUltimaPagina[2].id / 3) + 1;
+        pagina = ultimaReceita.pagina + 1;
       } else {
         // Página atual é a última página
-        pagina = Math.ceil(ultimaReceita.id / 3);
+        pagina = ultimaReceita.pagina;
       }
     }
 
