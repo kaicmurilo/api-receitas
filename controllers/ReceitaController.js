@@ -144,3 +144,38 @@ exports.obterReceitaPorId = async (req, res) => {
     res.status(500).json({ error: "Erro ao obter a receita" });
   }
 };
+
+exports.obterMinhasReceitas = async (req, res) => {
+  try {
+    let userId = "";
+    if (!req.headers["authorization"]) {
+      console.log("sem token");
+      return res.status(401).json({
+        error: "Você precisa estar autenticado para utilizar o serviço.",
+      });
+    }
+
+    // Verificar o nome do usuário cadastrando a receita
+    jwt.verify(
+      req.headers["authorization"],
+      process.env.JWT_SECRET,
+      (err, decoded) => {
+        if (err) {
+          return res.status(401).json({ error: "Token inválido" });
+        }
+        userId = decoded.userId;
+      }
+    );
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado." });
+    }
+
+    const receitas = await Receita.find({ idCadastrou: user._id });
+    res.json(receitas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Ocorreu um erro ao buscar as receitas." });
+  }
+};
